@@ -38,7 +38,7 @@ kind: Pod
 spec:
   containers:
   - name: jnlp
-    image: iadocicco/jenkins-agent-kubectl:latest
+    image: iadocicco/jenkins-agent-kubectl:jdk17
     args: ['\$(JENKINS_SECRET)', '\$(JENKINS_NAME)']
     env:
     - name: JENKINS_URL
