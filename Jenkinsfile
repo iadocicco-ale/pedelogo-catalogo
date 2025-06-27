@@ -42,7 +42,7 @@ pipeline {
                 }
 
                 // Aplica os manifestos no cluster
-                withCredentials([file(credentialsId: 'kub', variable: 'KUBECONFIG')]) {
+                withCredentials([file(credentialsId: 'kube', variable: 'KUBECONFIG')]) {
                     // API: deployment + service
                     sh 'kubectl apply -f ./k8s/api/'
 
