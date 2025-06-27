@@ -4,14 +4,14 @@ pipeline {
     stages {
         stage('Checkout Source') {
             steps {
-                git url: 'https://github.com/fabricioveronez/pedelogo-catalogo.git', branch: 'main'
+                git url: 'https://github.com/iadocicco/pedelogo-catalogo.git', branch: 'main'
             }
         }
 
         stage('Build Image') {
             steps {
                 script {
-                    dockerapp = docker.build("fabricioveronez/api-produto:${env.BUILD_ID}", 
+                    dockerapp = docker.build("iadocicco/api-produto:${env.BUILD_ID}", 
                         '-f ./src/PedeLogo.Catalogo.Api/Dockerfile .')
                 }
             }
