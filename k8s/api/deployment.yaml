@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+        - name: api
+          image: iadocicco/api-produto:{{tag}}
+          ports:
+            - containerPort: 80
+          resources: {}
+          env:
+            - name: Mongo_Host
+              value: mongo-service
+            - name: Mongo_User
+              value: mongodbuser
+            - name: Mongo_Password
+              value: mongodbpwd
+            - name: Mongo_Port
+              value: "27017"
+            - name: Mongo_DataBase
+              value: admin
+
