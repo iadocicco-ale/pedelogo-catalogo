@@ -27,5 +27,31 @@ pipeline {
                 }
             }
         }
+
+        stage('Deploy Kubernetes') {
+            agent {
+                kubernetes {
+                    cloud 'k8s-cluster01'
+                }
+            }
+            environment {
+                tag_version = "${env.BUILD_ID}"
+            }
+            steps {
+                script {
+                    // Substitui {{tag}} pela versão gerada no build
+                    sh 'sed -i "s/{{tag}}/${tag_version}/g" ./k8s/api/deployment.yaml'
+
+                    // Exibe o YAML com a versão injetada
+                    sh 'cat ./k8s/api/deployment.yaml'
+
+                    // Realiza o deploy no cluster via plugin Kubernetes CD
+                    kubernetesDeploy(
+                        configs: '**/k8s/**',
+                        kubeconfigId: 'kubeconfig'
+                    )
+                }
+            }
+        }
     }
 }
