@@ -40,14 +40,14 @@ pipeline {
             steps {
                 script {
                     // Substitui {{tag}} pela versão gerada no build
-                    sh 'sed -i "s/{{tag}}/${tag_version}/g" ./k8s/api/deployment.yaml'
+                    sh 'sed -i "s/{{tag}}/${tag_version}/g" ./src/k8s/api/deployment.yaml'
 
                     // Exibe o YAML com a versão injetada
-                    sh 'cat ./k8s/api/deployment.yaml'
+                    sh 'cat ./src/k8s/api/deployment.yaml'
 
                     // Realiza o deploy no cluster via plugin Kubernetes CD
                     kubernetesDeploy(
-                        configs: '**/k8s/**',
+                        configs: '**/src/k8s/**',
                         kubeconfigId: 'kube'
                     )
                 }
