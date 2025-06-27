@@ -48,7 +48,7 @@ pipeline {
                     // Realiza o deploy no cluster via plugin Kubernetes CD
                     kubernetesDeploy(
                         configs: '**/k8s/**',
-                        kubeconfigId: 'kubeconfig'
+                        kubeconfigId: 'kube'
                     )
                 }
             }
