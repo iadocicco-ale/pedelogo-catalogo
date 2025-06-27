@@ -29,11 +29,6 @@ pipeline {
         }
 
         stage('Deploy Kubernetes') {
-            agent {
-                kubernetes {
-                    cloud 'k8s-cluster01'
-                }
-            }
             environment {
                 tag_version = "${env.BUILD_ID}"
             }
@@ -44,12 +39,11 @@ pipeline {
 
                     // Exibe o YAML com a versão injetada
                     sh 'cat ./k8s/api/deployment.yaml'
+                }
 
-                    // Realiza o deploy no cluster via plugin Kubernetes CD
-                    kubernetesDeploy(
-                        configs: '**/k8s/**',
-                        kubeconfigId: 'kube'
-                    )
+                // Aplica no cluster usando o kubeconfig fornecido pelas credenciais do Jenkins
+                withCredentials([file(credentialsId: 'kube', variable: 'KUBECONFIG')]) {
+                    sh 'kubectl apply -f ./k8s/api/deployment.yaml'
                 }
             }
         }
