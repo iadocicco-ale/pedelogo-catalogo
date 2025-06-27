@@ -29,23 +29,6 @@ pipeline {
         }
 
         stage('Deploy Kubernetes') {
-            agent {
-                kubernetes {
-                    cloud 'k8s-cluster01'
-                    yaml """
-apiVersion: v1
-kind: Pod
-spec:
-  containers:
-  - name: jnlp
-    image: iadocicco/jenkins-agent-kubectl:jdk17
-    args: ['\$(JENKINS_SECRET)', '\$(JENKINS_NAME)']
-    env:
-    - name: JENKINS_URL
-      value: http://192.168.1.60:8080/
-"""
-                }
-            }
             environment {
                 tag_version = "${env.BUILD_ID}"
             }
@@ -54,14 +37,20 @@ spec:
                     // Substitui {{tag}} pela versão gerada no build
                     sh 'sed -i "s/{{tag}}/${tag_version}/g" ./k8s/api/deployment.yaml'
 
-                    // Exibe o YAML com a versão injetada
+                    // Exibe o YAML com a tag substituída
                     sh 'cat ./k8s/api/deployment.yaml'
                 }
 
+                // Aplica os manifestos no cluster
                 withCredentials([file(credentialsId: 'kube', variable: 'KUBECONFIG')]) {
-                    sh 'kubectl apply -f ./k8s/api/deployment.yaml'
+                    // API: deployment + service
+                    sh 'kubectl apply -f ./k8s/api/'
+
+                    // MongoDB: deployment + service
+                    sh 'kubectl apply -f ./k8s/mongodb/'
                 }
             }
         }
     }
 }
+
