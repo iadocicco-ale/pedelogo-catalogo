@@ -29,6 +29,23 @@ pipeline {
         }
 
         stage('Deploy Kubernetes') {
+            agent {
+                kubernetes {
+                    cloud 'k8s-cluster01'
+                    yaml """
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: jnlp
+    image: iadocicco/jenkins-agent-kubectl:latest
+    args: ['\$(JENKINS_SECRET)', '\$(JENKINS_NAME)']
+    env:
+    - name: JENKINS_URL
+      value: http://192.168.1.60:8080/
+"""
+                }
+            }
             environment {
                 tag_version = "${env.BUILD_ID}"
             }
@@ -41,7 +58,6 @@ pipeline {
                     sh 'cat ./k8s/api/deployment.yaml'
                 }
 
-                // Aplica no cluster usando o kubeconfig fornecido pelas credenciais do Jenkins
                 withCredentials([file(credentialsId: 'kube', variable: 'KUBECONFIG')]) {
                     sh 'kubectl apply -f ./k8s/api/deployment.yaml'
                 }
