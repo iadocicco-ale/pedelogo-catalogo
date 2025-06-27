@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Checkout Source') {
             steps {
-                git url: 'https://github.com/iadocicco/pedelogo-catalogo.git', branch: 'main'
+                git credentialsId: 'github-pat', url: 'https://github.com/iadocicco-ale/pedelogo-catalogo.git', branch: 'main'
             }
         }
 
